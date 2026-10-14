@@ -1,0 +1,190 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tomato Plant Nutrient Detection</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            font-family: Arial, sans-serif;
+            background: #f1f8f0;
+            color: #243526;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 30px auto;
+            padding: 35px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            color: #26733b;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .intro {
+            text-align: center;
+            line-height: 1.6;
+            color: #566456;
+        }
+
+        form {
+            margin-top: 30px;
+        }
+
+        input[type="file"] {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border: 1px dashed #7da985;
+            border-radius: 8px;
+            background: #f8fcf7;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 18px;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #26733b;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1c5a2d;
+        }
+
+        .result, .error {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 10px;
+            line-height: 1.7;
+        }
+
+        .result {
+            background: #edf8ed;
+            border: 1px solid #b7d9b8;
+        }
+
+        .error {
+            background: #fff0f0;
+            color: #a12323;
+        }
+
+        .note {
+            margin-top: 25px;
+            font-size: 13px;
+            color: #6b756b;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                padding: 22px;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <h1>🍅 Tomato Nutrient Detection</h1>
+
+        <p class="intro">
+            Upload a photo of your tomato plant to get a prediction
+            from the trained ResNet50 model.
+        </p>
+
+        <form method="POST" enctype="multipart/form-data">
+            <label for="plant_image"><strong>Select a plant image:</strong></label>
+            <br><br>
+
+            <input
+                type="file"
+                id="plant_image"
+                name="plant_image"
+                accept="image/*"
+                required
+            >
+
+            <button type="submit">Analyze Plant Image</button>
+        </form>
+
+        {% if prediction %}
+        <section class="result">
+            <h2>Analysis Result</h2>
+            <p><strong>Image:</strong> {{ filename }}</p>
+            <p><strong>Predicted class:</strong> {{ prediction }}</p>
+            <p><strong>Model confidence:</strong> {{ confidence }}%</p>
+
+            {% if prediction == "K" %}
+                <p>The model predicts class K.</p>
+            {% elif prediction == "N" %}
+                <p>The model predicts class N.</p>
+            {% elif prediction == "healthy" %}
+                <p>The model predicts the healthy class.</p>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        
+{% if error %}
+  <div class="error">
+    {{ error }}
+  </div>
+{% endif %}
+
+{% if prediction %}
+  <div class="result">
+    <h2>Analysis Result</h2>
+
+    <p>
+      <strong>Prediction:</strong>
+      {{ prediction }}
+    </p>
+
+    <p>
+      <strong>Model confidence:</strong>
+      {{ confidence }}%
+    </p>
+
+    {% if message %}
+      <p>{{ message }}</p>
+    {% endif %}
+
+    {% if result_status == "uncertain" %}
+      <p>
+        No reliable deficiency or healthy diagnosis was made.
+      </p>
+    {% endif %}
+  </div>
+{% endif %}
+
+        <p class="note">
+            Note: This result is a machine-learning prediction, not a
+            laboratory diagnosis. Confidence is not a guarantee of accuracy.
+            Confirm nutrient problems before treating your plants.
+        </p>
+    </main>
+</body>
+</html>
